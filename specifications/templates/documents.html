@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ event.name_event }}{% endblock %}
+
+{% block content %}
+{% if request.user.access_level.name == 'Administrator' or request.user.access_level.name == 'Chief' %}
+<div class="rounded h-100 p-5 bg-dark" style="--bs-bg-opacity: 0.3;">
+  <div class="container text-center">
+    <a href="{% url 'download_document' %}" class="btn btn-warning">
+        <h1 class="text-center text-so-xl">Загрузить документ</h1>
+    </a>
+
+</div>
+  <br>
+  {% endif %}
+{% for document in documentation %}
+  <div class="card mb-4 rounded-3 shadow-sm">
+    <div class="card-body text-so-l" style="font-size: 20px;">
+      <h1 class="h-100 p-2 rounded text-so-l text-center bg-dark text-light" style="font-size: 25px; --bs-bg-opacity: 0.5;">{{ document.name.upper }}</h1>
+      <p class="card-text light-so-m">{{ document.description}}</p>
+      <a class="card-text smooth-text btn btn-info" href="{{ document.document.url }}">Скачать</a>
+      {% if request.user.access_level.name == 'Administrator' or request.user.access_level.name == 'Chief' %}
+      <a class="card-text smooth-text btn btn-danger" href="{% url 'delete_document' document.id %}">Удалить</a>
+      {% endif %}
+    </div>
+</div>
+{% endfor %}
+</div>
+<br>
+<style>
+  .p {
+  white-space: break-spaces;
+  }
+</style>
+{% endblock %}

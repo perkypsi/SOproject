@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<br>
+<div class="container text-center" id="search">
+    <form class="d-flex" role="search" action="{% url 'events' %}" method="get">
+          <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search" name="search" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.8);">
+          <button class="btn btn-secondary" type="submit">Поиск</button>
+    </form>
+</div>
+<br>
+<div class="container text-center">
+    <a href="{% url 'create_event' %}" class="btn btn-success">
+        <h1 class="text-center text-so-xl">Создай свое мероприятие!</h1>
+    </a>
+
+</div>
+<br>
+{% if events_list %}
+<div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+    {% for event in events_list %}
+
+        <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+            <a href="{% url 'event_profile' event.id %}" class="list-group-item list-group-item-action" aria-current="true">
+                <div class="card mb-4 rounded-3 shadow-sm text-start text-so-l" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.8);">
+                    <div class="card-body" style="--bs-bg-opacity: .2;">
+                        <h5 class="card-title">
+                            {{ event.name_event }}
+                            {% if event.status.name == 'Регистрация' %}
+                                <span class="badge bg-success rounded-pill">{{ event.status.name }}</span>
+                            {% elif event.status.name == 'Разработка' %}
+                                <span class="badge bg-info rounded-pill">{{ event.status.name }}</span>
+                            {% elif event.status.name == 'Рассмотрение' %}
+                                <span class="badge bg-danger rounded-pill">{{ event.status.name }}</span>
+                            {% elif event.status.name == 'Реализация' %}
+                                <span class="badge bg-warning rounded-pill">{{ event.status.name }}</span>
+                            {% elif event.status.name == 'Проведено' %}
+                                <span class="badge bg-secondary rounded-pill">{{ event.status.name }}</span>
+                            {% endif %}
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{event.direct_event}}</h6>
+                        <p class="card-text element short_text">{{ event.aims_event }}</p>
+                        {% if request.profile.access_level.name != "Participant" and event.status.name == "Проведено" %}
+                        {% if event.report %}
+                        <a class="badge bg-success rounded-pill" href="{% url 'report_profile' event.report.id %}">Отчет сдан</a>
+                        {% else %}
+                        <p class="badge bg-danger rounded-pill text-light">Нет отчета</p>
+                        {% endif %}
+                        {% endif %}
+                        {% if request.profile.access_level.name != "Participant" and event.status.name == "Реализация" %}
+                        {% if not event.mendeleev_bonus %}
+                        <a class="badge bg-danger rounded-pill text-light" href="{% url 'add_mendeleev_bonus' event.id %}">Не добавлено в Mendeleev bonus</a>
+                        {% endif %}
+                        {% endif %}
+                        <small class="card-subtitle mb-2 text-muted">{{ event.date_event }}</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    {% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}

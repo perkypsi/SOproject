@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ event.name_event }}{% endblock %}
+
+{% block content %}
+<br>
+{% if event.status.name == 'Реализация' or event.status.name == 'Рассмотрение' or event.status.name == 'Проведено' %}
+<div class="container text-center">
+    <a href="{% url 'download_word_pp' event.id %}" class="btn btn-warning">
+        <h1 class="text-center text-so-xl">Скачать word</h1>
+    </a>
+
+</div>
+{% endif %}
+<br>
+{% if event.status.name == 'Разработка' %}
+<div class="col-4">
+  <a href="{% url 'edit_event' event.id %}" class="btn btn-primary">
+    <div class="row">
+      <div class="col-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+          <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+        </svg>
+      </div>
+      <div class="col-11">
+        <h4>Редактировать мероприятие </h4>
+      </div>
+    </div>
+  </a>
+</div>
+
+
+{% endif %}
+{% if request.user.access_level.name == 'Supervisor' and event.status.name != 'Проведено' and request.user.direct == event.direct_event %}
+<br>
+<div class="col-4 text=center">
+  <a class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+    <div class="row">
+      <div class="col-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+          <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
+        </svg>
+      </div>
+      <div class="col-11">
+        <h4> Отменить мероприятие</h4>
+      </div>
+    </div>
+  </a>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabe2">Подтверждение</h5>
+
+          </div>
+          <div class="modal-body">
+            <h4> Вы уверены, что хотите отменить мероприятия? </h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Нет, передумал</button>
+            <a href="{% url 'cancel_event' event.id %}" class="btn btn-primary" type="submit">Да</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endif %}
+{% if event.status.name == 'Проведено' and request.user == event.main_organizer and not event.report %}
+<br>
+<div class="col-4 mx-auto text-center">
+  <a class="btn btn-info" type="button" href="{% url 'create_report' event.id %}">
+    <div class="row">
+      <div class="col-11">
+        <h4> Отправить отчет</h4>
+      </div>
+    </div>
+  </a>
+</div>
+{% endif %}
+<br>
+<div class="rounded h-100 p-5 bg-dark" style="--bs-bg-opacity: 0.3;">
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Статус мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.status.name }}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Название мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.name_event }}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Дата проведения Мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.date_event }}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Комитет мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.direct_event}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">ФИО главного организатора</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.name_author}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Email главного организатора</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.email_author}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Телефонный номер главного организатора</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.phone_author}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">
+      Состав мероприятия
+      {% if request.user.access_level.name == 'Supervisor' and event.status.name != 'Проведено' and request.user.direct == event.direct_event %}
+   <a class="badge btn btn-dark text-center mx-auto" type="button" data-bs-toggle="modal" data-bs-target="#change_main_organizer">Сменить главного организатора</a>
+   <div class="modal fade" id="change_main_organizer" tabindex="-1" aria-labelledby="change_main_organizer_label" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="change_main_organizer_label">Вы уверены, что хотите сменить главного организатора этого мероприятия?</h5>
+            </div>
+            <div class="modal-body">
+              <form class="text-so-l" action="{% url 'change_main_organizer' event.id  %}" method="POST">
+                  {% csrf_token %}
+                  <p>
+                     <label class="light-so-l" for="login">Выберите нового главного организатора</label>
+                      <br>
+                     <select class="form-control rounded" name="login" id="login">
+                       {% for user in profiles %}
+                       <option class="light-so-m" value="{{ user.id }}">{{ user.username }} --> {{ user.last_name }} {{ user.first_name }} {{ user.patronymic }}</option>
+                       {% endfor %}
+                     </select>
+                  </p>
+                  <button class="btn btn-secondary" type="submit">Назначить</button>
+               </form>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Нет, передумал(a)</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endif %}
+    </h5>
+    <div class="card-body">
+      <ol class="list-group">
+        {% for participant in event.part_list.all %}
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+              <a href="{% url 'profile' participant.id %}" class="btn fw-bold">
+                {{ participant.username }}
+                {% if participant == event.main_organizer %}
+                  <span class="badge bg-primary rounded-pill">Глав. Орг.</span>
+                {% endif %}
+              </a>
+              {% if participant != event.main_organizer and event.status.name == 'Разработка' %}
+                <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal3" class="btn fw-bold">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                  </svg>
+                </a>
+              <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel3">Подтверждение</h5>
+
+                    </div>
+                    <div class="modal-body">
+                      <h4> Вы уверены, что хотите удалить помощника организатора {{ participant.username }}? </h4>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Нет, передумал</button>
+                      <a href="{% url 'delete_user_from_event' event.id participant.id %}" class="btn btn-primary" type="submit">Да</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+            <span class="badge bg-primary rounded-pill">{{ participant.rating }}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Цели мероприятия</h5>
+    <div class="card-body">
+      <pre class="card-text">{{event.aims_event}}</pre>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Концепция мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.concept_event}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Количество участников</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.amount_participants}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Место проведения мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.place_event}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Подготовка проекта</h5>
+    <div class="card-body">
+      <h5 class="card-title">Результат: В установленные сроки реализовать полную подготовку к мероприятию.<br> Задачи/Действия:</h5>
+      <p class="card-text">{{event.step_one}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Реклама</h5>
+    <div class="card-body">
+      <h5 class="card-title">Результат: Привлечение как-можно большего количества обучающихся к участию в данном проекте.<br> Задачи/Действия:</h5>
+      <p class="card-text">{{event.step_two}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Дистанционный этап</h5>
+    <div class="card-body">
+        <h5 class="card-title">Результат: Полная подготовка к очному проведению мероприятия.<br> Задачи/Действия:</h5>
+      <p class="card-text">{{event.step_three}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Очный этап</h5>
+    <div class="card-body">
+        <h5 class="card-title">Результат: Сбор писем и прокрутка барабана с пожеланиями.<br> Задачи/Действия:</h5>
+      <p class="card-text">{{event.step_four}}</p>
+    </div>
+  </div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Подведение итогов</h5>
+    <div class="card-body">
+      <h5 class="card-title">Результат: Выявить основные ошибки.<br> Задачи/Действия:</h5>
+      <p class="card-text">{{event.step_five}}</p>
+    </div>
+</div>
+ {% if event.need_info %}
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">
+    ТЗ для ИН
+    <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+      </svg>
+    </button>
+  </h5>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body light-so-l">
+      1. МК работает только по ТЗ в файле Word, никакие другие виды не принимаются (Текст в сообщении, голосовое сообщение и т.п.)<br>
+      2. ТЗ нужно присылать не позднее, чем за две недели до первого поста мероприятия/проекта. В случае, когда ТЗ присылается позднее этого времени, МК имеет право оставить ваше мероприятие/проект без информационной поддержки. Если для вашего мероприятия нужен мерч с индивидуальным дизайном, ТЗ по нему скидываете СТРОГО за 3 недели до даты проведения мероприятия.<br>
+      3. ТЗ должно содержать подробное описание того, что вы хотите видеть в конечном продукте, а также точные даты выхода постов и т.п. Вы должны сразу обсудить с группой организаторов все моменты для постов, чтобы у МК не возникало лишних вопросов. Если же они будут, отвечайте чётко и вовремя.<br>
+      4. Указывайте все требования к постам, ключевые пункты и то, что важно отметить. Можете набросать черновой вариант поста. Также если вам нужен индивидуальный стиль афиш для мероприятия, подробно и чётко описываете то, что вы хотите получить. Можете скинуть хотя бы примерные референсы.<br>
+      5. Если вы сами пишите пост, делаете афишу(корпоративный стиль/индивидуальный дизайн), то это должно быть обязательно согласовано с МК, в противном случае - ваша запись в любых соц.сетях СО будет удалена.<br>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="card-text">{{event.document_for_info}}</p>
+  </div>
+</div>
+  {% endif %}
+  {% if event.need_external %}
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">ТЗ для НВСК</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.document_for_external}}</p>
+  </div>
+</div>
+  {% endif %}
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Дополнительные документы</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.additional_document}}</p>
+  </div>
+</div>
+  </div>
+<br>
+  {% if event.status.name == 'Разработка' %}
+    <div class="col-4">
+      <a class="d-flex btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi me-2" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </svg>
+        <span class="fs-4">Завершить разработку</span>
+      </a>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Подтверждение</h5>
+
+          </div>
+          <div class="modal-body">
+            <h4> Вы уверены, что хотите завершить разработку мероприятия? </h4>
+            {% if event.need_info and event.document_for_info == '' %}
+            <h6 class="text-danger">Нет ссылки на ТЗ для ИН!</h6>
+            {% endif %}
+            {% if event.need_external and event.document_for_external == '' %}
+            <h6 class="text-danger">Нет ссылки на ТЗ для НВСК!</h6>
+            {% endif %}
+            {% if event.additional_document == '' %}
+            <h6 class="text-warning">Нет ссылки на дополнительные документы!</h6>
+            {% endif %}
+            {% if event.need_info and deadline_info_off %}
+              <h6 class="text-danger">ТЗ для ИН не будет отправлено, так как вышел срок!<br> Поменяйте дату мероприятия или закончите разработку.</h6>
+            {% endif %}
+            {% if event.need_external and deadline_external_off %}
+              <h6 class="text-danger">ТЗ для НВСК не будет отправлено, так как вышел срок!<br> Поменяйте дату мероприятия или закончите разработку.</h6>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Отмена</button>
+            <a href="{% url 'ending_event' event.id %}" class="btn btn-primary" type="submit">Закончить разработку</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+<br>
+<style>
+  .p {
+  white-space: break-spaces;
+  }
+</style>
+{% endblock %}

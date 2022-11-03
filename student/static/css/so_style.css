@@ -1,0 +1,44 @@
+
+@font-face {
+    font-family: "Inter-Black";
+    src: url("../fonts/Inter-Black.ttf");
+}
+
+.text-so-s {
+    font-family: "Inter-Black";
+    font-size: 10px;
+}
+.text-so-m {
+    font-family: "Inter-Black";
+    font-size: 15px;
+}
+.text-so-l {
+    font-family: "Inter-Black";
+    font-size: 20px;
+}
+.text-so-xl {
+    font-family: "Inter-Black";
+    font-size: 30px;
+}
+
+@font-face {
+    font-family: "Inter-Light";
+    src: url("../fonts/Inter-Light.ttf");
+}
+
+.light-so-s {
+    font-family: "Inter-Light";
+    font-size: 10px;
+}
+.light-so-m {
+    font-family: "Inter-Light";
+    font-size: 15px;
+}
+.light-so-l {
+    font-family: "Inter-Light";
+    font-size: 20px;
+}
+.light-so-xl {
+    font-family: "Inter-Light";
+    font-size: 30px;
+}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ event.name_event }}{% endblock %}
+
+{% block content %}
+<br>
+<div class="rounded h-100 p-5 bg-dark" style="--bs-bg-opacity: 0.3;">
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Название мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{ report.event.name_event }}</p>
+    </div>
+  </div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Дата начала мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{ report.date_start }}</p>
+  </div>
+</div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Дата окончания мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{ report.date_end }}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Комитет мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{ report.event.direct_event}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">ФИО главного организатора</h5>
+  <div class="card-body">
+    <p class="card-text">{{ report.event.name_author}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Состав мероприятия и оценка главным организатором</h5>
+  <div class="card-body">
+    <ol class="list-group">
+      {% for evaluate in evaluates %}
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+            <a href="{% url 'profile' evaluate.profile.id %}" class="btn fw-bold">
+              {{ evaluate.profile.last_name }} {{ evaluate.profile.first_name }} {{ evaluate.profile.patronymic }}
+              {% if evaluate.profile == report.event.main_organizer %}
+                <span class="badge bg-primary rounded-pill">Глав. Орг.</span>
+              {% endif %}
+            </a>
+          </div>
+          <p class="badge bg-dark text-so-l">{{ evaluate.evaluate }}</p>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Реальный охват</h5>
+  <div class="card-body">
+    <p class="card-text">{{ report.real_amount_participants }}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Реальные проблемы, возникшие при проведении мероприятия или его организации, и их решения</h5>
+  <div class="card-body">
+    <p class="card-text">{{ report.problems }}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Потребовалась ли помощь Информационного направления при организации мероприятия?</h5>
+  <div class="card-body">
+    <p class="card-text">{{ need_info }}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Потребовалась ли помощь Направления внешних связей и коммуникации при организации мероприятия?</h5>
+  <div class="card-body">
+     <p class="card-text">{{ need_external }}</p>
+  </div>
+</div>
+</div>
+{% endblock %}

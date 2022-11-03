@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+
+<div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+   <div class="col-sm-6 col-lg-4 mb-3" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card mb-3 bg-dark text-light" style="--bs-bg-opacity: .5;">
+        <div class="pie animate text-center mx-auto" style="--p:{{ active_users }};--c:blue;">{{ active_users }}%</div>
+        <div class="card-body">
+            <h5 class="card-title">Активисты</h5>
+            <p class="card-text light-so-m">Показывает какой процент людей проявляют активную деятельность в Совете обучающихся</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4 mb-3" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card mb-3 bg-dark text-light" style="--bs-bg-opacity: .5;">
+        <div class="pie animate text-center mx-auto" style="--p:{{ main_organizer_users }};--c:red;">{{ main_organizer_users }}%</div>
+        <div class="card-body">
+            <h5 class="card-title">Главные организаторы</h5>
+            <p class="card-text light-so-m">Показывает какой процент людей являются главными организаторами мероприятий в Совете обучающихся</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4 mb-3" style="position: absolute; left: 0%; top: 0px;">
+		<div class="card mb-3 bg-dark text-light" style="--bs-bg-opacity: .5;">
+            <div class="year-stats">
+                {% for direct, percent in amount_into_direct_percent.items %}
+                <div class="month-group">
+                    <div class="bar" style="height: {{ percent }}%;"></div>
+                    <p class="month">{{ direct }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="card-body">
+                <div class="card text-light" style="background-color: rgba(230, 230, 230, 0.1);" >
+                    <div class="card-body text-light d-flex justify-content-between align-items-center">
+                           <span class="badge text-so-l">{{ all_users }}</span>
+                       <h6 class="card-text text-so-l">Всего членов СО</h6>
+                    </div>
+                </div>
+                <br>
+                <h5 class="card-title">Кол-во человек в каждом комитете</h5>
+                <div class="card text-light" style="background-color: rgba(230, 230, 230, 0.1);" >
+                    {% for direct, amount in amount_into_direct.items %}
+                    <div class="card-body text-light d-flex justify-content-between align-items-center">
+                       <h1 class="card-text" >
+                           <span class="badge bg-secondary text-so-xl">{{ amount }}</span>
+                       </h1>
+                       <h6 class="card-text text-so-xl">{{ direct }}</h6>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4 mb-3" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card mb-3 bg-dark text-light" style="--bs-bg-opacity: .5;">
+        <div class="pie animate text-center mx-auto" style="--p:{{ amount_visits_round }};--c:orange;">{{ amount_visits }}%</div>
+        <div class="card-body">
+            <h4 class="card-title">Посещений на сайте</h4>
+            <p class="card-text light-so-m">Показывает какой процент людей посещают сайт Совета обучающихся за последнюю неделю</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4 mb-3" style="position: absolute; left: 0%; top: 0px;">
+      <a class="list-group-item list-group-item-action" href="{% url 'scholarship_list' %}">
+        <div class="card-body text-center card mb-3 bg-dark text-light" style="--bs-bg-opacity: .5;">
+            <h5 class="card-title text-so-xl">ПГАС</h5>
+            <p class="light-so-l">Панель выставления оценок для ПГАС (Только для председателя)</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-sm-6 col-lg-4 mb-3" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card mb-3 bg-dark text-light" style="--bs-bg-opacity: .5;">
+        <div class="card-body">
+            <h4 class="card-title text-center">Cтатистика мероприятий</h4>
+            {% for status, amount in events_list.items %}
+            <div class="card text-light" style="background-color: rgba(230, 230, 230, 0.1);" >
+                <div class="card-body text-light d-flex justify-content-between align-items-center">
+                    <span class="badge text-so-l" style="background-color: rgba(230, 230, 230, 0.1);">{{ amount }}</span>
+                   <h6 class="card-text light-so-l text-end">{{ status }}</h6>
+                </div>
+            </div>
+            {% endfor %}
+            <br>
+            <div class="card text-light" style="background-color: rgba(230, 230, 230, 0.1);" >
+                <div class="card-body text-light d-flex justify-content-between align-items-center">
+                       <span class="badge text-so-l">{{ all_events }}</span>
+                   <h6 class="card-text text-so-l">Всего мероприятий</h6>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% if request.user.access_level.name == 'Chief' %}
+<div class="border border-1 rounded h-100 p-5 bg-light text-center">
+    <a class="btn btn-primary" href="{% url 'create_user' %}">Создание пользователя</a>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="btn-group-vertical text-center" role="group" aria-label="Basic example">
+        <h1 class="text-danger text-so-l">!!! ЖОРА, БОГОМ МОЛЮ, НЕ ТРОГАЙ ЭТИ КНОПКИ СНИЗУ, А ТО ВСЕ ПОЛОМАЕТСЯ (кроме зеленой) !!!</h1>
+        <a class="btn btn-success" href="{% url 'parsing_users' %}">Парсинг пользователей</a>
+        <a class="btn btn-danger" href="{% url 'test_delete_users' %}">Тест на удаление всех пользователей</a>
+        <a class="btn btn-danger" href="{% url 'test_create_events' %}">Тест на создание мероприятий</a>
+        <a class="btn btn-danger" href="{% url 'test_delete_events' %}">Тест на удаление мероприятий</a>
+        <a class="btn btn-success" href="{% url 'update_all' %}">Глобальное обновление статистики</a>
+    </div>
+</div>
+{% endif %}
+<style>
+.year-stats {
+	white-space: nowrap;
+	max-height: 170px;
+	overflow: hidden;
+}
+
+.year-stats:hover {
+	overflow-x: auto;
+}
+/* SCROLL BAR STYLE (ONLY WORKS IN CHROME) */
+/* Width */
+::-webkit-scrollbar {
+	height: 20px;
+	width: 100%;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #444e80;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #abafc6;
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #5397d6;
+}
+
+.month-group {
+	cursor: pointer;
+	max-width: 400px;
+	height: 110px;
+	margin: 20px;
+	display: inline-block;
+}
+
+.bar {
+	background-color: #abafc6;
+	width: 20px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+
+.month-group:hover .bar,
+.selected .bar {
+	background: #5397d6;
+}
+
+.month-group:hover p,
+.selected p {
+	color: #fff;
+}
+
+
+</style>
+{% endblock %}

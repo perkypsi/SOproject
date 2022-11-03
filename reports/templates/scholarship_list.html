@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<br>
+<h1 class="h-100 p-2 rounded text-so-xl text-center bg-dark text-light" style="font-size: 35px; --bs-bg-opacity: 0.3;">Списки ПГАС</h1>
+   <br>
+<div class="container text-center" id="search">
+   <form class="d-flex" role="search" action="{% url 'scholarship_list' %}" method="get">
+      <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search" name="search" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.8);">
+      <button class="btn btn-secondary" type="submit">Поиск</button>
+   </form>
+</div>
+<br>
+{% if page_obj %}
+<div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+   {% for u in page_obj %}
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+      {% if u.scholarship %}
+      <a class="list-group-item list-group-item-action" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+         <div class="card mb-4 rounded-3 text-start border border-3 border-success" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.8);">
+            <div class="card-body ">
+               <h5 class="card-title text-so-m" style="font-size: 18px">
+                  {{u.username}}
+                  <span class="badge rounded-pill" style="background-color: #{{ u.direct.color }}">{{ u.access_level }}</span>
+               </h5>
+               <h6 class="card-subtitle mb-2 text-muted">{{u.last_name}} {{u.first_name}}</h6>
+               <div class="card-text">
+                  <h5>{{u.direct}}</h5>
+                  <h5 class="text-so-l text-success">Баллов для ПГАС: {{ u.scholarship.evaluate }}</h5>
+                  <h6 class="badge bg-dark text-so-m">{{ u.post }}</h6>
+               </div>
+            </div>
+         </div>
+      </a>
+      <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel2">Удаление оценки ПГАС</h5>
+               </div>
+               <div class="modal-body">
+                  <p>У пользователя уже есть оценка ПГАС, вы уверены, что хотите ее удалить?</p>
+               </div>
+               <div class="modal-footer">
+                  <a href="{% url 'scholarship_delete' u.id %}" class="btn btn-danger" type="submit">Удалить</a>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет, передумал</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      {% else %}
+      <a class="list-group-item list-group-item-action" href="{% url 'scholarship_profile' u.id %}">
+         <div class="card mb-4 rounded-3 text-start " style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.8);">
+            <div class="card-body ">
+               <h5 class="card-title text-so-m" style="font-size: 18px">
+                  {{u.username}}
+                  <span class="badge rounded-pill" style="background-color: #{{ u.direct.color }}">{{ u.access_level }}</span>
+               </h5>
+               <h6 class="card-subtitle mb-2 text-muted">{{u.last_name}} {{u.first_name}}</h6>
+               <div class="card-text">
+                  <h5>{{u.direct}}</h5>
+                  <h6 class="badge bg-dark text-so-m">{{ u.post }}</h6>
+               </div>
+            </div>
+         </div>
+      </a>
+      {% endif %}
+   </div>
+   {% endfor %}
+</div>
+{% endif %}
+<nav aria-label="...">
+   <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+         <a class="page-link" href="?search={{ search_query }}&page=1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+               <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+            </svg>
+         </a>
+      </li>
+      <li class="page-item">
+         <a class="page-link" href="?search={{ search_query }}&page={{ page_obj.previous_page_number }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+         </a>
+      </li>
+      {% endif %}
+      <li class="page-item disabled">
+         <p class="page-link">{{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</p>
+      </li>
+      {% if page_obj.has_next %}
+      <li class="page-item">
+         <a class="page-link" href="?search={{ search_query }}&page={{ page_obj.next_page_number }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+            </svg>
+         </a>
+      </li>
+      <li class="page-item">
+         <a class="page-link " href="?search={{ search_query }}&page={{ page_obj.paginator.num_pages }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+               <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+            </svg>
+         </a>
+      </li>
+      {% endif %}
+   </ul>
+</nav>
+{% endblock %}

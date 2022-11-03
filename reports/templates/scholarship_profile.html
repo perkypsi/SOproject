@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="rounded h-100 p-5 bg-dark" style="--bs-bg-opacity: 0.5;">
+   <div class="container">
+       <h1 class="h-100 p-2 rounded text-so-xl text-center bg-dark text-light" style="font-size: 35px; --bs-bg-opacity: 0.3;">Оценивание {{ user_evaluate.username }}</h1>
+   <br>
+      <form action="{% url 'scholarship_profile' user_evaluate.id %}" method="POST">
+         {% csrf_token %}
+         <table class="table table-sm text-light">
+            <thead>
+               <tr class="text-so-l">
+                  <th scope="col">Мероприятие</th>
+                  <th scope="col">Дата</th>
+                  <th scope="col">Роль</th>
+                  <th scope="col">Баллы главного организатора</th>
+                  <th scope="col">Подходит</th>
+                  <th scope="col">Баллы ПГАС</th>
+               </tr>
+            </thead>
+            <tbody>
+               {% for item in data %}
+               <tr class="light-so-l">
+                  <td>{{ item.event }}</td>
+                  <td>{{ item.date }}</td>
+                  <td>{{ item.role }}</td>
+                  <td>{{ item.score }}</td>
+                  <td>{{ item.approval }}</td>
+                  <td><input class="form-control light-so-l btn btn btn-sm border border-1 text-light my-3" type="number" name="{{ item.event }}"></td>
+               </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+         <button class="btn btn-dark" type="submit">Сохранить</button>
+      </form>
+   </div>
+</div>
+{% endblock %}
+<!--<div class="col-sm-8 col-lg-6 mb-6" style="position: absolute; left: 0%; top: 0px;">
+   <div class="card mb-4 rounded-3 shadow-sm text-center" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.9);">
+      <h4 class="card-header">{{ attribute }}</h4>
+      <div class="card-body">
+         <p class="card-text h5 light-so-l">{{ identifier }}</p>
+      </div>
+   </div>
+   </div>-->

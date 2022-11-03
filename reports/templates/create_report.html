@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="border border-5 rounded h-100 p-5 bg-light">
+
+    <form class="text-so-l" action="{% url 'create_report' event.id %}" method="POST">
+        {% csrf_token %}
+        {% if error %}
+        <p class="errorlist">{{ error }}</p>
+        {% endif %}
+        <div class="text-danger text-so-xl">{{ form.non_field_errors }}</div>
+        {{ form.as_p }}
+        <br>
+        <br>
+        <h3>Оцените работу каждого организатора по пятибальной шкале</h3>
+        {% for profile in part_list %}
+        <p>
+            <label for="id_{{ profile.username }}">{{ profile.last_name }} {{ profile.first_name }} {{ profile.patronymic }}
+            </label>
+            <input class="form-control light-so-l" id="id_{{ profile.username }}" type="number" name="{{ profile.username }}">
+        </p>
+
+        {% endfor %}
+        <br>
+        <br>
+        <p>
+            <label class="form-check-label" for="flexCheckIndeterminate">
+              Я несу ответственность за все выставленные баллы и правильность составления отчета по мероприятию
+            </label>
+            <input type="checkbox" name="control_checkbox" class="form-check-input light-so-l" role="switch" id="flexCheckIndeterminate">
+        </p>
+        <br>
+        <br>
+        <button class="btn btn-secondary" type="submit">Отправить отчет</button>
+    </form>
+</div>
+<style>
+    .errorlist
+        {
+            color: red;
+            font-size: xx-large;
+        }
+</style>
+{% endblock %}

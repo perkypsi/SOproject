@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <!--<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link href="{% static 'css/so_style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <link href="{% static 'css/statistic_circle.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'logo-so.png' %}" type="image/x-icon">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="b-example-divider"></div>
+  <header class="p-3 fixed text-dark">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom border-dark">
+        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 text-center">
+          <button class="btn btn-outline me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+          </button>
+        </div>
+        <img src="{% static 'logo-so-black.png' %}" style="width:50px; height:50px; ">
+        <a href="/" class="d-flex align-items-center text-dark mb-2 mb-lg-0 text-decoration-none">
+          <span class="text-so-xl">Совет обучающихся</span>
+        </a>
+         <div class="nav col-12 col-lg-auto me-lg-auto mb-2"></div>
+         <a href="{% url 'profile' request.user.id %}" class="d-flex align-items-center text-dark me-2 mb-lg-0 text-decoration-none">
+            <span class=" text-so-l">{{ request.user.username.upper }}</span>
+        </a>
+        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 text-center">
+          <button class="btn btn-outline me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+              </svg>
+              {% if request.user.notification_set.all.count != 0 %}
+              <span class="badge bg-info">{{ request.user.notification_set.all.count }}</span>
+              {% endif %}
+          </button>
+          <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                  <form action="{% url 'review' %}" method="POST">
+                      {% csrf_token %}
+                      <div class="modal-body">
+                              <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label text-dark">Предложение/ошибка</label>
+                                <input name="title" class="form-control" id="exampleFormControlInput1">
+                              </div>
+                              <div class="mb-3">
+                                <label for="exampleFormControlTextarea1" class="form-label text-dark">Содержание</label>
+                                <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                              </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-secondary" type="submit">Отправить</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
+                      </div>
+                  </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<div class="b-example-divider"></div>
+
+<!-- END HEADER -->
+
+<!-- MENU -->
+<div class="offcanvas offcanvas-start text-light gradient" data-bs-scroll="true" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel" style="background-color: #5E5E5E">
+  <!--<div class="offcanvas-header">
+      <h4 class="offcanvas-title text-so-l text-center" id="offcanvasWithBothOptionsLabel">Главное меню</h4>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>-->
+  <div class="offcanvas-body">
+    <ul class="nav flex-column sticky-top">
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'home' %}">Доска</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'profile' request.user.id %}">Профиль</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'events' %}">Мероприятия</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'users' %}">Список СО</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'rating' %}">Рейтинг СО</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'documents' %}">Документация</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'adm_panel' %}">Административная панель</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn text-so-l text-light text-start" href="{% url 'login' %}">Выход</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- END MENU -->
+
+<!-- NOTIFICATIONS -->
+{% if show %}
+<div class="offcanvas offcanvas-end show" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    {% else %}
+    <div class="offcanvas offcanvas-end text-light gradient" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        {% endif %}
+  <div class="offcanvas-header text-center">
+    <h5 class="offcanvas-title text-so-l text-center" id="offcanvasRightLabel">Уведомления</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+      {% if request.user.notification_set.count != 0 %}
+      <div class="text-center">
+        <a class="btn btn-secondary" href="{% url 'delete_notification' request.user.id %}">Очистить список уведомлений</a>
+      </div>
+      <br>
+      {% endif %}
+    {% for notification in notifications_list %}
+      <div class="card text-bg-light mb-3">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-10 h5">{{ notification.title }}</div>
+            </div>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{ notification.content }}</p>
+        </div>
+      </div>
+  {% endfor %}
+  </div>
+</div>
+
+<!-- END NOTIFICATIONS -->
+
+<!-- MAIN -->
+
+<div class="background">
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+  <div class="container text-so-m">
+    <br>
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+
+<!-- END MAIN -->
+
+<div class="container text-dark">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top border-dark">
+    <div class="col-md-4 d-flex align-items-center">
+      <span class="mb-3 mb-md-0 text-so-m">© 2022 Совет обучающихся РХТУ им. Д.И. Менделеева</span>
+    </div>
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+      <li class="ms-3"><a class="btn btn-outline me-2" href="https://vk.com/somuctr"><svg class="bi" width="25" height="25" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.802 12.298s1.617 1.597 2.017 2.336a.127.127 0 0 1 .018.035c.163.273.203.487.123.645-.135.261-.592.392-.747.403h-2.858c-.199 0-.613-.052-1.117-.4-.385-.269-.768-.712-1.139-1.145-.554-.643-1.033-1.201-1.518-1.201a.548.548 0 0 0-.18.03c-.367.116-.833.639-.833 2.032 0 .436-.344.684-.585.684H9.674c-.446 0-2.768-.156-4.827-2.327C2.324 10.732.058 5.4.036 5.353c-.141-.345.155-.533.475-.533h2.886c.387 0 .513.234.601.444.102.241.48 1.205 1.1 2.288 1.004 1.762 1.621 2.479 2.114 2.479a.527.527 0 0 0 .264-.07c.644-.354.524-2.654.494-3.128 0-.092-.001-1.027-.331-1.479-.236-.324-.638-.45-.881-.496.065-.094.203-.238.38-.323.441-.22 1.238-.252 2.029-.252h.439c.858.012 1.08.067 1.392.146.628.15.64.557.585 1.943-.016.396-.033.842-.033 1.367 0 .112-.005.237-.005.364-.019.711-.044 1.512.458 1.841a.41.41 0 0 0 .217.062c.174 0 .695 0 2.108-2.425.62-1.071 1.1-2.334 1.133-2.429.028-.053.112-.202.214-.262a.479.479 0 0 1 .236-.056h3.395c.37 0 .621.056.67.196.082.227-.016.92-1.566 3.016-.261.349-.49.651-.691.915-1.405 1.844-1.405 1.937.083 3.337z"/></svg></a></li>
+      <li class="ms-3"> <a class="btn btn-outline me-2" href="https://t.me/sovetmuctr">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-telegram" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"/>
+</svg>
+            </a></li>
+      <li class="ms-3"> <a class="btn btn-outline me-2" href="https://vm.tiktok.com/ZSeRMCBNB/">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-tiktok" viewBox="0 0 16 16">
+  <path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3V0Z"/>
+</svg>
+            </a></li>
+     <li class="ms-3"> <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal3" class="btn btn-outline me-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi" viewBox="0 0 16 16">
+                <path d="M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+              </svg>
+            </a></li>
+    </ul>
+  </footer>
+</div>
+</div>
+
+<style>
+.gradient {
+    background: linear-gradient(303deg, #820186, #2f4da2, #950064, #002f9c);
+    background-size: 800% 800%;
+
+    -webkit-animation: gradient 9s ease infinite;
+    -moz-animation: gradient 9s ease infinite;
+    animation: gradient 9s ease infinite;
+}
+
+@-webkit-keyframes gradient {
+    0%{background-position:68% 0%}
+    50%{background-position:33% 100%}
+    100%{background-position:68% 0%}
+}
+@-moz-keyframes gradient {
+    0%{background-position:68% 0%}
+    50%{background-position:33% 100%}
+    100%{background-position:68% 0%}
+}
+@keyframes gradient {
+    0%{background-position:68% 0%}
+    50%{background-position:33% 100%}
+    100%{background-position:68% 0%}
+}
+/* ============= Animation background ========= */
+.bg {
+  animation:slide 60s ease-in-out infinite alternate;
+  background-image: linear-gradient(-60deg, #6e14b4 50%, #993864 50%, #e8a23a 50% );
+  bottom:0;
+  left:-50%;
+  opacity:.5;
+  position:fixed;
+  right:-50%;
+  top:0;
+  z-index:-1;
+}
+
+.bg2 {
+  animation-direction:alternate-reverse;
+  animation-duration:45s;
+}
+
+.bg3 {
+  animation-duration:30s;
+}
+
+.content {
+  background-color:rgba(255,255,255,.8);
+  border-radius:.25em;
+  box-shadow:0 0 .25em rgba(0,0,0,.25);
+  box-sizing:border-box;
+  left:50%;
+  padding:10vmin;
+  position:fixed;
+  text-align:center;
+  top:50%;
+  transform:translate(-50%, -50%);
+}
+
+h1 {
+  font-family:monospace;
+}
+
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
+</body>
+</html>

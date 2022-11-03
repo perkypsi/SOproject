@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ event.name_event }}{% endblock %}
+{% block content %}
+<div class="rounded h-100 p-5 bg-dark" style="--bs-bg-opacity: 0.3;">
+   <h1 class="h-100 p-2 rounded text-so-xl text-center bg-dark text-light" style="font-size: 35px; --bs-bg-opacity: 0.3;">Рейтинг членов Совета обучающихся</h1>
+   <br>
+   <div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+      <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+         <div class="card mb-4 rounded-pill shadow-sm border border-5 border-warning text-dark">
+            <div class="card-body text-center text-so-l">
+               {{ first.username.upper }}
+               <p class="badge bg-dark card-text ">{{ first.rating }}</p>
+            </div>
+         </div>
+      </div>
+      <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+         <div class="card mb-4 rounded-pill shadow-sm border border-5 border-secondary text-dark">
+            <div class="card-body text-center text-so-l">
+               {{ second.username.upper }}
+               <p class="badge bg-dark card-text ">{{ second.rating }}</p>
+            </div>
+         </div>
+      </div>
+      <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+         <div class="card mb-4 rounded-pill shadow-sm border border-5 text-dark" style="border-color: #967444;">
+            <div class="card-body text-center text-so-l">
+               {{ third.username.upper }}
+               <p class="badge bg-dark card-text ">{{ third.rating }}</p>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% for direct, profiles in all_direct.items %}
+   <div class="container">
+   <h1 class="h-100 p-5 rounded text-so-xl text-center bg-dark text-light" style="font-size: 30px; --bs-bg-opacity: 0.3;">{{ direct }}</h1>
+      <br>
+   <div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+      {% for profile in profiles %}
+      <div class="col-sm-5 col-lg-3 mb-4" style="position: absolute; left: 0%; top: 0px;">
+         {% if profile.id is request.user.id %}
+         <div class="card mb-4 rounded-3 shadow-sm bg-primary text-light">
+            <div class="card-body text-center text-so-l" style="font-size: 20px;">
+               {{ profile.username }}
+               <p class="badge bg-dark card-text ">{{ profile.rating }}</p>
+            </div>
+         </div>
+         {% else %}
+         <div class="card mb-4 rounded-3 shadow-sm">
+            <div class="card-body text-center text-so-l" style="font-size: 20px;">
+               {{ profile.username }}
+               <p class="badge bg-dark card-text ">{{ profile.rating }}</p>
+            </div>
+         </div>
+         {% endif %}
+      </div>
+      {% endfor %}
+   </div>
+   </div>
+   {% endfor %}
+</div>
+<br>
+<style>
+   .p {
+   white-space: break-spaces;
+   }
+</style>
+{% endblock %}

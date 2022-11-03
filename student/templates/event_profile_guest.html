@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ event.name_event }}{% endblock %}
+
+{% block content %}
+{% if event.status.name == 'Разработка' and request.user not in part_list and request.user not in queue_list %}
+<br>
+<div class="container text-center">
+    <a href="{% url 'register_user_activity' event.id %}" class="btn btn-success">
+        <h1 class="text-center">Принять участие!</h1>
+    </a>
+
+</div>
+{% endif %}
+{% if request.user.access_level.name == 'Supervisor' and event.status.name != 'Проведено' and request.user.direct == event.direct_event %}
+<br>
+<div class="col-4 text=center">
+  <a class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+    <div class="row">
+      <div class="col-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+          <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
+        </svg>
+      </div>
+      <div class="col-11">
+        <h4> Отменить мероприятие</h4>
+      </div>
+    </div>
+  </a>
+</div>
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabe2">Подтверждение</h5>
+
+          </div>
+          <div class="modal-body">
+            <h4> Вы уверены, что хотите отменить мероприятия? </h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Нет, передумал</button>
+            <a href="{% url 'cancel_event' event.id %}" class="btn btn-primary" type="submit">Да</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endif %}
+<br>
+<div class="rounded h-100 p-5 bg-dark" style="--bs-bg-opacity: 0.3;">
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+    <h5 class="card-header">Статус мероприятия</h5>
+    <div class="card-body">
+      <p class="card-text">{{event.status.name }}</p>
+    </div>
+  </div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Название мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.name_event }}</p>
+  </div>
+</div>
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Дата проведения Мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.date_event }}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Комитет мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.direct_event}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">ФИО главного организатора</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.name_author}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Email главного организатора</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.email_author}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Телефонный номер главного организатора</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.phone_author}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">
+    Состав мероприятия
+    {% if request.user.access_level.name == 'Supervisor' and event.status.name != 'Проведено' and request.user.direct == event.direct_event %}
+   <a class="badge btn btn-dark text-center mx-auto" type="button" data-bs-toggle="modal" data-bs-target="#change_main_organizer">Сменить главного организатора</a>
+   <div class="modal fade" id="change_main_organizer" tabindex="-1" aria-labelledby="change_main_organizer_label" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="change_main_organizer_label">Вы уверены, что хотите сменить главного организатора этого мероприятия?</h5>
+            </div>
+            <div class="modal-body">
+              <form class="text-so-l" action="{% url 'change_main_organizer' event.id  %}" method="POST">
+                  {% csrf_token %}
+                  <p>
+                     <label class="light-so-l" for="login">Выберите нового главного организатора</label>
+                      <br>
+                     <select class="form-control rounded" name="login" id="login">
+                       {% for user in profiles %}
+                       <option class="light-so-m" value="{{ user.id }}">{{ user.username }} --> {{ user.last_name }} {{ user.first_name }} {{ user.patronymic }}</option>
+                       {% endfor %}
+                     </select>
+                  </p>
+                  <button class="btn btn-secondary" type="submit">Назначить</button>
+               </form>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Нет, передумал(a)</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endif %}
+  </h5>
+  <div class="card-body">
+    <ol class="list-group">
+      {% for participant in event.part_list.all %}
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+            <a href="{% url 'profile' participant.id %}" class="btn fw-bold">
+              {{ participant.username }}
+              {% if participant == event.main_organizer %}
+                <span class="badge bg-primary rounded-pill">Глав. Орг.</span>
+              {% endif %}
+            </a>
+          </div>
+          <span class="badge bg-primary rounded-pill">{{ participant.rating }}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Цели мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.aims_event}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Концепция мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text" style="white-space: break-spaces;">{{event.concept_event}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Количество участников</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.amount_participants}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Место проведения мероприятия</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.place_event}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Подготовка проекта</h5>
+  <div class="card-body">
+      <h5 class="card-title">Результат: В установленные сроки реализовать полную подготовку к мероприятию.<br> Задачи/Действия:
+</h5>
+    <p class="card-text">{{event.step_one}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Реклама</h5>
+  <div class="card-body">
+      <h5 class="card-title">Результат: Привлечение как-можно большего количества обучающихся к участию в данном проекте.<br> Задачи/Действия:</h5>
+    <p class="card-text">{{event.step_two}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Дистанционный этап</h5>
+  <div class="card-body">
+      <h5 class="card-title">Результат: Полная подготовка к очному проведению мероприятия.<br> Задачи/Действия:</h5>
+    <p class="card-text">{{event.step_three}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Очный этап</h5>
+  <div class="card-body">
+      <h5 class="card-title">Результат: Сбор писем и прокрутка барабана с пожеланиями.<br> Задачи/Действия:</h5>
+    <p class="card-text">{{event.step_four}}</p>
+  </div>
+</div>
+<div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Подведение итогов</h5>
+  <div class="card-body">
+    <h5 class="card-title">Результат: Выявить основные ошибки.<br> Задачи/Действия:</h5>
+    <p class="card-text">{{event.step_five}}</p>
+  </div>
+</div>
+  {% if request.user.access_level.name == 'Supervisor' or request.user.access_level.name == 'Administrator' or request.user.access_level.name == 'Chief' %}
+{% if event.need_info %}
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">ТЗ для ИН</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.document_for_info}}</p>
+  </div>
+</div>
+  {% endif %}
+  {% if event.need_external %}
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">ТЗ для НВСК</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.document_for_external}}</p>
+  </div>
+</div>
+  {% endif %}
+  <div class="card mb-4 rounded-3 shadow-sm border border-5">
+  <h5 class="card-header">Дополнительные документы</h5>
+  <div class="card-body">
+    <p class="card-text">{{event.additional_document}}</p>
+  </div>
+</div>
+  {% endif %}
+</div>
+<style>
+  .p {
+  white-space: break-spaces;
+  }
+</style>
+{% endblock %}

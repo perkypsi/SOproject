@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card bg-dark text-light" style="--bs-bg-opacity: .5;">
+         <div class="card-header h4 text-center text-so-l bg-dark text-light" style="--bs-bg-opacity: .5;">
+            Статистика
+            <a href="{% url 'update_all' %}" class="btn text-light me-2">
+               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                 <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                 <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+               </svg>
+            </a>
+         </div>
+         <div class="card-body text-light" style="--bs-bg-opacity: .5; background-color: rgba(230, 230, 230, 0.5);">
+            <h1 class="card-text" ><span class="badge bg-secondary text-so-xl">{{ own_event_list.count }}</span></h1>
+            <h6 class="card-text">Моих мероприятий</h6>
+         </div>
+         <div class="card-body text-light" style="--bs-bg-opacity: .5; background-color: rgba(230, 230, 230, 0.5);">
+            <h1 class="card-text"><span class="badge bg-secondary text-so-xl">{{ audience_reach }}</span></h1>
+            <h6 class="card-text">Охват аудитории</h6>
+         </div>
+         <div class="card-body text-light" style="--bs-bg-opacity: .5; background-color: rgba(230, 230, 230, 0.5);">
+            <h1 class="card-text"><span class="badge bg-secondary text-so-xl">{{ assistant_in_events }}</span></h1>
+            <h6 class="card-text">Помощник в мероприятиях</h6>
+         </div>
+         <div class="card-body text-light" style="--bs-bg-opacity: .5; background-color: rgba(230, 230, 230, 0.5);">
+            <h1 class="card-text"><span class="badge bg-secondary text-so-xl">{{ amount_assistants }}</span></h1>
+            <h6 class="card-text">Помощников в ваших мероприятиях</h6>
+         </div>
+         <div class="card-body text-light" style="--bs-bg-opacity: .5; background-color: rgba(230, 230, 230, 0.5);">
+            <h1 class="card-text"><span class="badge bg-secondary text-so-xl">{{ request.user.rating }}</span></h1>
+            <h6 class="card-text">Рейтинговое место</h6>
+         </div>
+      </div>
+   </div>
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;" style="--bs-bg-opacity: 0.3;">
+      <div class="card bg-dark text-light text-so-m" style="--bs-bg-opacity: .5;">
+         <div class="card-header h4 text-center text-so-l bg-dark text-light" style="--bs-bg-opacity: .5;">
+            Мои мероприятия
+         </div>
+         <div class="list-group">
+            {% for event in own_event_list %}
+            <a href="{% url 'event_profile' event.id %}"  class="list-group-item list-group-item-action text-light" aria-current="true" style="background-color: rgba(152, 149, 156, 0.3);;">
+               <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1 text-so-m" style="font-size: 18px">{{ event.name_event }}</h5>
+                  {% if event.status.name == 'Регистрация' %}
+                  <span class="badge bg-success">{{ event.status.name }}</span>
+                  {% elif event.status.name == 'Разработка' %}
+                  <span class="badge bg-info">{{ event.status.name }}</span>
+                  {% elif event.status.name == 'Рассмотрение' %}
+                  <span class="badge bg-danger">{{ event.status.name }}</span>
+                  {% elif event.status.name == 'Реализация' %}
+                  <span class="badge bg-warning">{{ event.status.name }}</span>
+                  {% elif event.status.name == 'Проведено' %}
+                  <span class="badge bg-secondary">{{ event.status.name }}</span>
+                  {% endif %}
+               </div>
+               <p class="mb-1 text-so-m short_text">{{ event.aims_event }}</p>
+            </a>
+            {% endfor %}
+         </div>
+      </div>
+   </div>
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card bg-dark text-light" style="--bs-bg-opacity: .5;"">
+         <div class="card-header h4 text-center text-so-l bg-dark text-light" style="--bs-bg-opacity: .5;">
+            Участвую
+         </div>
+         <div class="list-group">
+            {% for part_event in request.user.part_list.all %}
+            {% if part_event not in own_event_list and part_event.status.name != 'Проведено' %}
+            <a href="{% url 'event_profile' part_event.id %}" class="list-group-item list-group-item-action text-light" aria-current="true" style="--bs-bg-opacity: .5; background-color: rgba(152, 149, 156, 0.3);">
+               <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1 text-so-m">{{ part_event.name_event }}</h5>
+                  {% if part_event.status.name == 'Регистрация' %}
+                  <span class="badge bg-success">{{ part_event.status.name }}</span>
+                  {% elif part_event.status.name == 'Разработка' %}
+                  <span class="badge bg-info">{{ part_event.status.name }}</span>
+                  {% elif part_event.status.name == 'Рассмотрение' %}
+                  <span class="badge bg-danger">{{ part_event.status.name }}</span>
+                  {% elif part_event.status.name == 'Реализация' %}
+                  <span class="badge bg-warning">{{ part_event.status.name }}</span>
+                  {% elif part_event.status.name == 'Проведено' %}
+                  <span class="badge bg-secondary">{{ part_event.status.name }}</span>
+                  {% endif %}
+               </div>
+               <p class="mb-1 text-so-s short_text">{{ part_event.aims_event }}</p>
+            </a>
+            {% endif %}
+            {% endfor %}
+         </div>
+      </div>
+   </div>
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card bg-dark text-light" style="--bs-bg-opacity: .5;">
+         <div class="card-header h4 text-center text-so-l bg-dark text-light" style="--bs-bg-opacity: .5;">
+            Хотят принять участие
+         </div>
+         <ol class="list-group text-light" style="background-color: rgba(152, 149, 156, 0.3);">
+            {% for own_event in own_event_list %}
+            {% for participant in own_event.queue_list.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-start bg-dark text-light" style="--bs-bg-opacity: .0;">
+               <div class="ms-2 me-auto">
+                  <div class="fw-bold">{{ participant.username }}</div>
+                  <p class="">Хочет принять участие в мероприятии "{{ own_event.name_event }}"</p>
+                  <a href="{% url 'profile' participant.id %}" class="btn btn-secondary">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                     </svg>
+                  </a>
+                  <a href="{% url 'confirm_register_users' own_event.id participant.id %}" class="btn btn-success">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                     </svg>
+                  </a>
+                  <a href="{% url 'cancel_register_users' own_event.id participant.id %}" class="btn btn-danger">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                     </svg>
+                  </a>
+               </div>
+               <span class="badge bg-primary rounded-pill">{{ participant.rating }}</span>
+            </li>
+            {% endfor %}
+            {% endfor %}
+         </ol>
+      </div>
+   </div>
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card bg-dark text-light" style="--bs-bg-opacity: .5;">
+         <div class="card-header h4 text-center text-so-l bg-dark text-light" style="--bs-bg-opacity: .5;">
+            Заявки на одобрения
+         </div>
+         {% if request.user.access_level.name != 'Participant' %}
+         <ol class="list-group">
+            {% if request.user.access_level.name == 'Supervisor' %}
+            {% for event_approval in applications_for_approval %}
+            {% if request.user.direct == event_approval.direct_event %}
+            <li class="list-group-item d-flex justify-content-between align-items-start text-light" style="background-color: rgba(152, 149, 156, 0.3);">
+               <div class="ms-2 me-auto">
+                  <div class="fw-bold">{{ event_approval.name_event }}</div>
+                  <p class="mb-1 short_text">{{ event_approval.aims_event }}</p>
+                  {% if event_approval.need_info %}
+                     {% if event_approval.info_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #008000">ТЗ для ИН одобрено</div>
+                     {% elif not event_approval.info_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #cc0000">ТЗ для ИН не одобрено</div>
+                     {% endif %}
+                  {% endif %}
+                  {% if event_approval.need_external %}
+                     {% if event_approval.external_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #008000">ТЗ для НВСК одобрено</div>
+                     {% elif not event_approval.external_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #cc0000">ТЗ для НВСК не одобрено</div>
+                     {% endif %}
+                  {% endif %}
+                  {% if not event_approval.project_documentation %}
+                  <span class="badge">
+                     <a href="{% url 'event_profile' event_approval.id %}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'approval_event' event_approval.id %}" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                           <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'degradation_status' event_approval.id %}" class="btn btn-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                           <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                     </a>
+                  </span>
+                  {% endif %}
+               </div>
+               {% if event_approval.status.name == 'Регистрация' %}
+               <span class="badge bg-success">{{ event_approval.status }}</span>
+               {% else %}
+               <span class="badge bg-danger">{{ event_approval.status }}</span>
+               {% endif %}
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            {% for event_approval in applications_for_approval %}
+            <li class="list-group-item d-flex justify-content-between align-items-start text-light" style="background-color: rgba(152, 149, 156, 0.3);">
+               <div class="ms-2 me-auto">
+                  <div class="fw-bold">{{ event_approval.name_event }}</div>
+                  <p class="mb-1 short_text">{{ event_approval.aims_event }}</p>
+                  {% if event_approval.need_info %}
+                     {% if event_approval.info_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #008000">ТЗ для ИН одобрено</div>
+                     {% elif not event_approval.info_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #cc0000">ТЗ для ИН не одобрено</div>
+                     {% endif %}
+                  {% endif %}
+                  {% if event_approval.need_external %}
+                     {% if event_approval.external_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #008000">ТЗ для НВСК одобрено</div>
+                     {% elif not event_approval.external_documentation and event_approval.status.name == 'Рассмотрение' %}
+                     <div class="h3 text-center text-so-l" style="color: #cc0000">ТЗ для НВСК не одобрено</div>
+                     {% endif %}
+                  {% endif %}
+                  {% if not event_approval.project_documentation %}
+                  <span class="badge">
+                     <a href="{% url 'event_profile' event_approval.id %}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'approval_event' event_approval.id %}" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                           <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'degradation_status' event_approval.id %}" class="btn btn-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                           <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                     </a>
+                  </span>
+                  {% endif %}
+               </div>
+               {% if event_approval.status.name == 'Регистрация' %}
+               <span class="badge bg-success">{{ event_approval.status }}</span>
+               {% else %}
+               <span class="badge bg-danger">{{ event_approval.status }}</span>
+               {% endif %}
+            </li>
+            {% endfor %}
+            {% endif %}
+         </ol>
+         {% else %}
+         <div class="h3 text-center light-so-l">Вы не являетесь руководителем своего комитеты ☹</div>
+         {% endif %}
+      </div>
+   </div>
+   <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card bg-dark text-light" style="--bs-bg-opacity: .5;"">
+         <div class="card-header h4 text-center text-so-l bg-dark text-light" style="--bs-bg-opacity: .5;">
+            ТЗ для мероприятий
+         </div>
+         {% if request.user.access_level.name == 'Supervisor' and request.user.direct.id_name == 'info' %}
+         {% for spec_event in specifications_list_info %}
+         <div class="list-group">
+            <a href="{% url 'event_profile' spec_event.id %}" class="list-group-item list-group-item-action text-light" aria-current="true" style="background-color: rgba(152, 149, 156, 0.3);">
+               <div class="d-flex w-100 justify-content-between" style="--bs-bg-opacity: .0;">
+                  <h5 class="mb-1 text-so-m">{{ spec_event.name_event }}</h5>
+                  {% if spec_event.status.name == 'Регистрация' %}
+                  <span class="badge bg-success">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Разработка' %}
+                  <span class="badge bg-info">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Рассмотрение' %}
+                  <span class="badge bg-danger">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Реализация' %}
+                  <span class="badge bg-warning">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Проведено' %}
+                  <span class="badge bg-secondary">{{ spec_event.status.name }}</span>
+                  {% endif %}
+               </div>
+               <p class="mb-1 text-so-s short_text">{{ spec_event.aims_event }}</p>
+               {% if spec_event.project_documentation and spec_event.status.name == 'Рассмотрение' %}
+               <div class="h3 text-center text-so-l" style="color: #008000">Папка проекта одобрена</div>
+               {% elif not spec_event.project_documentation and spec_event.status.name == 'Рассмотрение' %}
+               <div class="h3 text-center text-so-l" style="color: #cc0000">Папка проекта не одобрена</div>
+               {% endif %}
+            </a>
+            {% if not spec_event.info_documentation and spec_event.status.name == 'Рассмотрение' %}
+            <span class="badge">
+                     <a href="{% url 'event_profile' spec_event.id %}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'approval_event' spec_event.id %}" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                           <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'degradation_status' spec_event.id %}" class="btn btn-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                           <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                     </a>
+            </span>
+               {% endif %}
+         </div>
+         {% endfor %}
+         {% elif request.user.access_level.name == 'Supervisor' and request.user.direct.name == 'Комитет внешних связей и коммуникаций' %}
+         {% for spec_event in specifications_list_external %}
+         <div class="list-group">
+            <a href="{% url 'event_profile' spec_event.id %}" class="list-group-item list-group-item-action" aria-current="true">
+               <div class="d-flex w-100 justify-content-between" style="--bs-bg-opacity: .5;">
+                  <h5 class="mb-1">{{ spec_event.name_event }}</h5>
+                  {% if spec_event.status.name == 'Регистрация' %}
+                  <span class="badge bg-success">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Разработка' %}
+                  <span class="badge bg-info">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Рассмотрение' %}
+                  <span class="badge bg-danger">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Реализация' %}
+                  <span class="badge bg-warning">{{ spec_event.status.name }}</span>
+                  {% elif spec_event.status.name == 'Проведено' %}
+                  <span class="badge bg-secondary">{{ spec_event.status.name }}</span>
+                  {% endif %}
+               </div>
+               <p class="mb-1 short_text">{{ spec_event.aims_event }}</p>
+               {% if spec_event.project_documentation and spec_event.status.name == 'Рассмотрение' %}
+               <div class="h3 text-center text-so-l" style="color: #008000">Папка проекта одобрена</div>
+               {% elif not spec_event.project_documentation and spec_event.status.name == 'Рассмотрение' %}
+               <div class="h3 text-center text-so-l" style="color: #cc0000">Папка проекта не одобрена</div>
+               {% endif %}
+            </a>
+            {% if not spec_event.external_documentation and spec_event.status.name == 'Рассмотрение' %}
+            <span class="badge">
+                     <a href="{% url 'event_profile' spec_event.id %}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'approval_event' spec_event.id %}" class="btn btn-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                           <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                        </svg>
+                     </a>
+                     <a href="{% url 'degradation_status' spec_event.id %}" class="btn btn-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                           <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                     </a>
+            </span>
+               {% endif %}
+         </div>
+         {% endfor %}
+         {% else %}
+         <div class="h3 text-center light-so-l">Вы не являетесь руководителем МК или КВСК ☹</div>
+         {% endif %}
+      </div>
+   </div>
+</div>
+{% endblock %}

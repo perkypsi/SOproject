@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="border border-5 rounded h-100 p-5 bg-light">
+
+    <form class="text-so-l" action="{% url 'create_event' %}" method="POST">
+        {% csrf_token %}
+
+        <div class="text-danger text-so-xl">{{ form.non_field_errors }}</div>
+        {{ form.as_p }}
+
+        <button class="btn btn-secondary" type="submit">Подать заявку</button>
+    </form>
+</div>
+<style>
+    .errorlist
+        {
+            color: red;
+            font-size: xx-large;
+        }
+</style>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ profile.username }}{% endblock %}
+{% block content %}
+{% if request.user != profile and profile.access_level.name != 'Administrator' and profile.access_level.name != 'Chief' %}
+{% if request.user.access_level.name == 'Administrator' or request.user.access_level.name == 'Chief'%}
+<div class="rounded p-2 bg-dark text-center" style="--bs-bg-opacity: 0.3;">
+   {% if profile.ban %}
+   <a class="btn btn-success text-center mx-auto" href="{% url 'unban_user' profile.id  %}">Разблокировать профиль</a>
+   {% else %}
+   <a class="btn btn-danger text-center mx-auto" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Заблокировать профиль</a>
+   <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel2">Вы уверены, что хотите заблокировать пользователя?</h5>
+            </div>
+            <div class="modal-body">
+               <form class="text-so-l" action="{% url 'ban_user' profile.id  %}" method="POST">
+                  {% csrf_token %}
+                  <p>
+                     <label class="" for="number">Введите время блокировки (в часах)</label>
+                     <input class="form-control rounded" name="hours" type="number" id="number">
+                     <span class="light-so-m">В случае ввода не числа или ненатурального числа, автоматически выберется значение 1</span>
+                  </p>
+                  <button class="btn btn-secondary" type="submit">Заблокировать</button>
+               </form>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Нет, передумал</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endif %}
+</div>
+<br>
+{% endif %}
+{% endif %}
+<div class="row">
+   <div class="col-sm-2 col-lg-4"></div>
+   <div class="col-sm-8 col-lg-4 mw-70">
+      <div class="card rounded-pill border border-dark border-3" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.8);">
+         <div class="card-body text-center">
+            <div class="h4 text-so-xl border-bottom border-1 border-dark">{{ profile.last_name }} {{ profile.first_name }} {{ profile.patronymic }}</div>
+            <h3 class="card-text light-so-l">{{ profile.username }}</h3>
+         </div>
+      </div>
+   </div>
+   <div class="col-sm-2 col-lg-4"></div>
+</div>
+<br>
+<br>
+<br>
+<div class="row" data-masonry="{&quot;percentPosition&quot;: true }" style="position: relative; height: 1854.7px;">
+   {% for attribute, identifier in attributes_list.items  %}
+   <div class="col-sm-8 col-lg-6 mb-6" style="position: absolute; left: 0%; top: 0px;">
+      <div class="card mb-4 rounded-3 shadow-sm text-center" style="--bs-bg-opacity: .5; background-color: rgba(255, 255, 255, 0.9);">
+         <h4 class="card-header">{{ attribute }}</h4>
+         <div class="card-body">
+            <p class="card-text h5 light-so-l">{{ identifier }}</p>
+         </div>
+      </div>
+   </div>
+   {% endfor %}
+</div>
+{% endblock %}
